@@ -7,7 +7,7 @@ use craft\base\Model;
 use craft\base\Plugin;
 use Mixpanel;
 use yii\base\Event;
-use yo\craftmixpaneltracking\models\Settings;
+use yohanbrg\craftmixpaneltracking\models\Settings;
 
 /**
  * Mixpanel Tracking plugin
