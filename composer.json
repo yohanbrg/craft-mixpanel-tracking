@@ -1,0 +1,31 @@
+{
+    "name": "yohanbrg/craft-mixpanel-tracking",
+    "type": "craft-plugin",
+    "require": {
+        "php": ">=8.0.2",
+        "craftcms/cms": "^4.4.0",
+        "mixpanel/mixpanel-php": "^2.11"
+    },
+    "autoload": {
+        "psr-4": {
+            "yohanbrg\\craftmixpaneltracking\\": "src/"
+        }
+    },
+    "extra": {
+        "handle": "_mixpanel-tracking",
+        "name": "Mixpanel Tracking",
+        "developer": "Yo",
+        "documentationUrl": "",
+        "class": "yohanbrg\\craftmixpaneltracking\\MixpanelTracking"
+    },
+    "config": {
+        "sort-packages": true,
+        "platform": {
+            "php": "8.0.2"
+        },
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true,
+            "craftcms/plugin-installer": true
+        }
+    }
+}
