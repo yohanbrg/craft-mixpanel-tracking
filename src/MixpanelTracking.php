@@ -39,7 +39,7 @@ class MixpanelTracking extends Plugin
     protected function settingsHtml(): ?string
     {
         return \Craft::$app->getView()->renderTemplate(
-            '_mixpanel-tracking/settings', 
+            '_mixpanel-tracking/settings',
             ['settings' => $this->getSettings()]
         );
     }
@@ -88,17 +88,26 @@ class MixpanelTracking extends Plugin
 
         if (!$request->getIsConsoleRequest() && !$request->getIsAjax() && $request->getIsGet()) {
             $currentPageUrl = $request->getAbsoluteUrl();
-            $currentSiteTitle = Craft::$app->getSites()->getCurrentSite()->name;
-            $deviceId = $this->retrieveOrCreateDeviceId();
+            // Vérifier si l'URL contient une locale
+            if ($this->containsLocale($currentPageUrl)) {
+                $currentSiteTitle = Craft::$app->getSites()->getCurrentSite()->name;
+                $deviceId = $this->retrieveOrCreateDeviceId();
 
-            $this->mixpanel->track('page_view', array_merge([
-                '$current_url' => $currentPageUrl,
-                'title' => $currentSiteTitle,
-                '$device_id' => $deviceId,
-                '$ip' => $request->getUserIP(),
-            ], $utmParameters, $referrerInfo));
+                $this->mixpanel->track('page_view', array_merge([
+                    '$current_url' => $currentPageUrl,
+                    'title' => $currentSiteTitle,
+                    '$device_id' => $deviceId,
+                    '$ip' => $request->getUserIP(),
+                ], $utmParameters, $referrerInfo));
+            }
         }
     }
+
+    private function containsLocale($url)
+    {
+        return preg_match('/https?:\/\/www\.youstock\.com\/[a-z]{2}-[a-z]{2}/', $url) === 1;
+    }
+
 
     private function retrieveOrCreateDeviceId()
     {
@@ -137,5 +146,4 @@ class MixpanelTracking extends Plugin
 
         return [];
     }
-    
 }
