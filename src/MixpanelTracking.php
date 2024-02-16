@@ -91,24 +91,39 @@ class MixpanelTracking extends Plugin
 
     private function trackPageView()
     {
-        $utmParameters = $this->getUTMAndAdClickParameters();
-        $referrerInfo = $this->getReferrerInfo();
         $request = Craft::$app->getRequest();
+        $response = Craft::$app->getResponse();
 
-        if (!$request->getIsConsoleRequest() && !$request->getIsAjax() && $request->getIsGet()) {
-            $currentPageUrl = $request->getAbsoluteUrl();
-            // Vérifier si l'URL contient une locale
-            if ($this->containsLocale($currentPageUrl)) {
-                $currentSiteTitle = Craft::$app->getSites()->getCurrentSite()->name;
-                $deviceId = $this->retrieveOrCreateDeviceId();
+        if ($response->statusCode != 200) {
+            return;
+        }
 
-                $this->mixpanel->track('page_view', array_merge([
-                    '$current_url' => $currentPageUrl,
-                    'title' => $currentSiteTitle,
-                    '$device_id' => $deviceId,
-                    '$ip' => $request->getUserIP(),
-                ], $utmParameters, $referrerInfo));
-            }
+        // Obtenir l'URL actuelle et analyser ses composants
+        $currentUrl = $request->getAbsoluteUrl();
+        $urlComponents = parse_url($currentUrl);
+
+        // Exclure les sitemap.xml, robots.txt et les URLs avec un paramètre token
+        if (
+            in_array($urlComponents['path'], ['/sitemap.xml', '/robots.txt']) ||
+            isset($urlComponents['query']) && strpos($urlComponents['query'], 'token=') !== false
+        ) {
+            return;
+        }
+
+        $utmAndAdClickParameters = $this->getUTMAndAdClickParameters();
+        $referrerInfo = $this->getReferrerInfo();
+
+        // Vérifier si l'URL contient une locale
+        if ($this->containsLocale($currentUrl)) {
+            $currentSiteTitle = Craft::$app->getSites()->getCurrentSite()->name;
+            $deviceId = $this->retrieveOrCreateDeviceId();
+
+            $this->mixpanel->track('page_view', array_merge([
+                '$current_url' => $currentUrl,
+                'title' => $currentSiteTitle,
+                '$device_id' => $deviceId,
+                '$ip' => $request->getUserIP(),
+            ], $utmAndAdClickParameters, $referrerInfo));
         }
     }
 
