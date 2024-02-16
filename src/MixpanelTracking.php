@@ -94,10 +94,9 @@ class MixpanelTracking extends Plugin
                 'expire' => time() + 86400 * 365,
                 'domain' => '.youstock.com',
             ]);
+            Craft::$app->getResponse()->getCookies()->add($cookie);
         }
     
-        Craft::$app->getResponse()->getCookies()->add($cookie);
-
         return array_filter($utmParameters);
     }
 
