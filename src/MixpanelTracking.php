@@ -92,6 +92,7 @@ class MixpanelTracking extends Plugin
                 'name' => $utmAndAdClickCookie,
                 'value' => json_encode($utmParameters),
                 'expire' => time() + 86400 * 365,
+                'domain' => '.youstock.com',
             ]);
         }
     
@@ -121,17 +122,17 @@ class MixpanelTracking extends Plugin
             return;
         }
         
-        $utmAndAdClickParameters = $this->getUTMAndAdClickParameters();
+        $utmAndAdClickParameters = $this->getUTMAndAdClickParameters($request);
         $referrerInfo = $this->getReferrerInfo();
 
         // Vérifier si l'URL contient une locale
         if ($this->containsLocale($currentUrl)) {
-            $currentSiteTitle = Craft::$app->getSites()->getCurrentSite()->name;
+            $pageTitle = Craft::$app->getUrlManager()->getMatchedElement()?->title;
             $deviceId = $this->retrieveOrCreateDeviceId();
 
             $this->mixpanel->track('page_view', array_merge([
                 '$current_url' => $currentUrl,
-                'title' => $currentSiteTitle,
+                'title' => $pageTitle,
                 '$device_id' => $deviceId,
                 '$ip' => $request->getUserIP(),
             ], $utmAndAdClickParameters, $referrerInfo));
