@@ -65,7 +65,7 @@ class MixpanelTracking extends Plugin
         $this->mixpanel = Mixpanel::getInstance($token, array("host" => "api-eu.mixpanel.com"));
     }
 
-    private function getUTMParameters()
+    private function getUTMAndAdClickParameters()
     {
         $request = Craft::$app->getRequest();
 
@@ -74,7 +74,16 @@ class MixpanelTracking extends Plugin
             'utm_medium'   => $request->getQueryParam('utm_medium'),
             'utm_campaign' => $request->getQueryParam('utm_campaign'),
             'utm_term'     => $request->getQueryParam('utm_term'),
-            'utm_content'  => $request->getQueryParam('utm_content')
+            'utm_content'  => $request->getQueryParam('utm_content'),
+            'dclid'        => $request->getQueryParam('dclid'),
+            'fbclid'       => $request->getQueryParam('fbclid'),
+            'gclid'        => $request->getQueryParam('gclid'),
+            'ko_click_id'  => $request->getQueryParam('ko_click_id'),
+            'li_fat_id'    => $request->getQueryParam('li_fat_id'),
+            'msclkid'      => $request->getQueryParam('msclkid'),
+            'ttclid'       => $request->getQueryParam('ttclid'),
+            'twclid'       => $request->getQueryParam('twclid'),
+            'wbraid'       => $request->getQueryParam('wbraid')
         ];
 
         return array_filter($utmParameters);
@@ -82,7 +91,7 @@ class MixpanelTracking extends Plugin
 
     private function trackPageView()
     {
-        $utmParameters = $this->getUTMParameters();
+        $utmParameters = $this->getUTMAndAdClickParameters();
         $referrerInfo = $this->getReferrerInfo();
         $request = Craft::$app->getRequest();
 
