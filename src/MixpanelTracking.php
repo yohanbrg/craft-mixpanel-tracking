@@ -126,12 +126,10 @@ class MixpanelTracking extends Plugin
 
         // Vérifier si l'URL contient une locale
         if ($this->containsLocale($currentUrl)) {
-            $pageTitle = Craft::$app->getUrlManager()->getMatchedElement()?->title;
             $deviceId = $this->retrieveOrCreateDeviceId();
 
             $this->mixpanel->track('page_view', array_merge([
                 '$current_url' => $currentUrl,
-                'title' => $pageTitle,
                 '$device_id' => $deviceId,
                 '$ip' => $request->getUserIP(),
             ], $utmAndAdClickParameters, $referrerInfo));
