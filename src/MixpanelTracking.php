@@ -114,9 +114,8 @@ class MixpanelTracking extends Plugin
 
     private function containsLocale($url)
     {
-        return preg_match('/https?:\/\/www\.youstock\.com\/[a-z]{2}-[a-z]{2}/', $url) === 1;
+        return preg_match('/http[s]?:\/\/.*\/[a-z]{2}-[a-z]{2}/', $url) === 1;
     }
-
 
     private function retrieveOrCreateDeviceId()
     {
