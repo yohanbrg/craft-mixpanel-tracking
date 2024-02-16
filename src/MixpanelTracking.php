@@ -65,7 +65,7 @@ class MixpanelTracking extends Plugin
         $this->mixpanel = Mixpanel::getInstance($token, array("host" => "api-eu.mixpanel.com"));
     }
 
-    private function getUTMAndAdClickParameters()
+    private function getUTMAndAdClickParameters($request)
     {
         $request = Craft::$app->getRequest();
 
@@ -85,6 +85,17 @@ class MixpanelTracking extends Plugin
             'twclid'       => $request->getQueryParam('twclid'),
             'wbraid'       => $request->getQueryParam('wbraid')
         ];
+
+        $utmAndAdClickCookie = 'ysuad';
+        if (!$request->getCookies()->has($utmAndAdClickCookie)) {
+            $cookie = new \yii\web\Cookie([
+                'name' => $utmAndAdClickCookie,
+                'value' => json_encode($utmParameters),
+                'expire' => time() + 86400 * 365,
+            ]);
+        }
+    
+        Craft::$app->getResponse()->getCookies()->add($cookie);
 
         return array_filter($utmParameters);
     }
@@ -109,7 +120,7 @@ class MixpanelTracking extends Plugin
         ) {
             return;
         }
-
+        
         $utmAndAdClickParameters = $this->getUTMAndAdClickParameters();
         $referrerInfo = $this->getReferrerInfo();
 
@@ -134,7 +145,7 @@ class MixpanelTracking extends Plugin
 
     private function retrieveOrCreateDeviceId()
     {
-        $cookieName = 'YouStockDeviceId';
+        $cookieName = 'ysdid';
 
         $request = Craft::$app->getRequest();
         $deviceId = $request->getCookies()->getValue($cookieName);
