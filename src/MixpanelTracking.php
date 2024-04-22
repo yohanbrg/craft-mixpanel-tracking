@@ -61,7 +61,7 @@ class MixpanelTracking extends Plugin
 
     private function initMixpanel()
     {
-        $token = $this->settings->token;
+        $token = $this->getSettings()->token;
         $this->mixpanel = Mixpanel::getInstance($token, array("host" => "api-eu.mixpanel.com"));
     }
 
@@ -102,7 +102,10 @@ class MixpanelTracking extends Plugin
 
     private function getIPsToIgnore(): array
     {
-        $IPs = explode(',', $this->settings->ignoreIpList);
+        if (!isset($this->getSettings()->ignoreIpList)) {
+            return [];
+        }
+        $IPs = explode(',', $this->getSettings()->ignoreIpList);
         if (!count($IPs)) {
             return [];
         }
@@ -121,6 +124,10 @@ class MixpanelTracking extends Plugin
 
         if (in_array($request->getUserIP(), $this->getIPsToIgnore())) 
         {
+            return;
+        }
+
+        if (Craft::$app->getUser()?->getIsAdmin()) {
             return;
         }
 
