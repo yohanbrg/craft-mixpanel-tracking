@@ -13,8 +13,7 @@ class Settings extends Model
     public function defineRules(): array
     {
         return [
-            [['token'], 'required'],
-            [['ignoreIpList'], 'nullable']
+            [['token'], 'required']
         ];
     }
 }

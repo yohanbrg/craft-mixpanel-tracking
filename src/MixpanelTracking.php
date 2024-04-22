@@ -137,6 +137,7 @@ class MixpanelTracking extends Plugin
 
         // Exclure les sitemap.xml, robots.txt et les URLs avec un paramètre token
         if (
+            str_contains($currentUrl, 'sitemap') ||
             in_array($urlComponents['path'], ['/sitemap.xml', '/robots.txt']) ||
             isset($urlComponents['query']) && strpos($urlComponents['query'], 'token=') !== false
         ) {
