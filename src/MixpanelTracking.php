@@ -100,12 +100,27 @@ class MixpanelTracking extends Plugin
         return array_filter($utmParameters);
     }
 
+    private function getIPsToIgnore(): array
+    {
+        $IPs = explode(',', $this->settings->ignoreIpList);
+        if (!count($IPs)) {
+            return [];
+        }
+        
+        return array_map(fn (string $ip) => trim($ip), $IPs);
+    }
+
     private function trackPageView()
     {
         $request = Craft::$app->getRequest();
         $response = Craft::$app->getResponse();
 
         if ($response->statusCode != 200) {
+            return;
+        }
+
+        if (in_array($request->getUserIP(), $this->getIPsToIgnore())) 
+        {
             return;
         }
 
@@ -128,11 +143,16 @@ class MixpanelTracking extends Plugin
         if ($this->containsLocale($currentUrl)) {
             $deviceId = $this->retrieveOrCreateDeviceId();
 
-            $this->mixpanel->track('page_view', array_merge([
+            $params = [...$utmAndAdClickParameters, ...$referrerInfo];
+
+            $this->mixpanel->track('page_view', [
                 '$current_url' => $currentUrl,
                 '$device_id' => $deviceId,
                 '$ip' => $request->getUserIP(),
-            ], $utmAndAdClickParameters, $referrerInfo));
+                ...$params
+            ]);
+
+            $this->mixpanel->people->set($deviceId, $params);
         }
     }
 

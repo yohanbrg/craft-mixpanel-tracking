@@ -1,8 +1,19 @@
 {% import '_includes/forms' as forms %}
 
-{{ forms.textField({
-  first: true,
-  label: 'Token',
-  name: 'token',
-  value: settings.token
-}) }}
+{{ 
+  forms.textField({
+    first: true,
+    label: 'Token',
+    name: 'token',
+    value: settings.token
+  }) 
+}}
+
+{{  
+  forms.textField({
+    first: true,
+    label: 'IPs to ignore',
+    name: 'ignoreIpList',
+    value: settings.ignoreIpList
+  })
+}}
