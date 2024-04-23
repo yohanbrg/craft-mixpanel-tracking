@@ -160,7 +160,7 @@ class MixpanelTracking extends Plugin
                 ...$params
             ]);
 
-            $this->mixpanel->people->set($deviceId, $params);
+            $this->mixpanel->people->set(sprintf('$device:%s', $deviceId), $params);
         }
     }
 
